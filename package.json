@@ -5,11 +5,9 @@
   "main": "./js/index.js",
   "typings": "./js/index.d.ts",
   "keywords": [
-    "RCF",
-    "Messageing",
-    "Notification",
+    "MSSQL",
     "Express",
-    "Router"
+    "Middleware"
   ],
   "repository": {
     "type": "git",
