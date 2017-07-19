@@ -1,6 +1,11 @@
 import * as express from "express";
 import * as sql from "mssql";
 import * as _ from "lodash";
+export * from "mssql";
+
+// for regular connection using tedius driver, config = {server: "MyServer", database: "MyDatabase", user: "MyUserName", password: "MyPassword"}
+// for trusted connection using msnodesqlv8 driver, config = {server: "MyServer", database: "MyDatabase", options: {trustedConnection: true}}
+// for regular connection using msnodesqlv8 driver, config = {server: "MyServer", database: "MyDatabase", user: "MyUserName", password: "MyPassword"}
 
 export type ConfigSource = (req: express.Request) => sql.config;
 export type ConnectedPoolCallback = (req: express.Request, pool: sql.ConnectionPool) => void;
