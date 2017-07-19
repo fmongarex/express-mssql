@@ -7,6 +7,7 @@ export type ConnectedPoolCallback = (req: express.Request, pool: sql.ConnectionP
 
 export interface Options {
     configSrc: ConfigSource
+    msnodesqlv8?: boolean;
     connectedPoolCallback?: ConnectedPoolCallback;
     connectErrorCode?: number;
     connectErrorMsg?: string;
@@ -16,12 +17,21 @@ export interface Options {
 
 let defaultOptions: Options = {
     configSrc: (req: express.Request) => {return null;}
+    ,msnodesqlv8: false
     ,connectedPoolCallback: (req: express.Request, pool: sql.ConnectionPool) => {}
     ,connectErrorCode: 500
     ,connectErrorMsg: null
     ,badConfigErrorMsg: "invalid database configuration"
     ,poolErrorCallback: (err: any) => {}
 };
+
+function createPool(msnodesqlv8: boolean, config: sql.config) : sql.ConnectionPool {
+    if (msnodesqlv8) {
+        const nsql = require('mssql/msnodesqlv8');
+        return new nsql.ConnectionPool(config);
+    } else
+        return new sql.ConnectionPool(config);
+}
 
 export function get(options: Options) : express.RequestHandler {
     options = options || defaultOptions;
@@ -31,7 +41,7 @@ export function get(options: Options) : express.RequestHandler {
         if (!config)
             res.status(500).end(options.badConfigErrorMsg);
         else {
-            let pool = new sql.ConnectionPool(config);
+            let pool = createPool(options.msnodesqlv8, config);
             pool.on("error", options.poolErrorCallback)
             .connect()
             .then((value: sql.ConnectionPool) => {
